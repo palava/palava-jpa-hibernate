@@ -25,6 +25,8 @@ import java.net.URL;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.inject.name.Named;
 
@@ -36,13 +38,23 @@ import de.cosmocode.palava.core.service.Service;
  * @author Willi Schoenborn
  */
 public class HibernateService implements Service {
+    
+    private static final Logger log = LoggerFactory.getLogger(HibernateService.class);
 
     private final SessionFactory sessionFactory;
 
     public HibernateService(@Named("hibernate.cfg") File cfg, @Named("hibernate.schema") URL schema) {
         final Configuration configuration = new AnnotationConfiguration();
+        
+        log.debug("Adding hibernate schema");
         configuration.addURL(schema);
+        
+        log.debug("Adding hibernate config file");
         configuration.configure(cfg);
+
+        // TODO add services as interceptors, event listeners, filters, ...
+
+        log.debug("Building session factory");
         this.sessionFactory = configuration.buildSessionFactory();
     }
     

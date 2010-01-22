@@ -17,77 +17,69 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package de.cosmocode.palava.jobs.hib;
+package de.cosmocode.palava.services.persistence.hibernate;
 
 import java.util.Map;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.hibernate.Session;
 
 import de.cosmocode.palava.MissingArgumentException;
 import de.cosmocode.palava.core.call.Call;
-import de.cosmocode.palava.core.protocol.JsonCall;
+import de.cosmocode.palava.core.protocol.DataCall;
 import de.cosmocode.palava.core.protocol.Response;
 import de.cosmocode.palava.core.server.Server;
-import de.cosmocode.palava.core.session.HttpSession;
 
-public abstract class CachableJSONHibJob extends CachableHibJob {
+public abstract class CachableDataHibJob extends CachableHibJob {
+
+    private Map<String, String> args;
     
-    private JSONObject json;
-
     @Override
-    public final void process(Call request, Response response, HttpSession s, Server server, 
-        Map<String, Object> caddy, org.hibernate.Session session) throws Exception {
+    @SuppressWarnings("unchecked")
+    public final void process(Call request, Response response, de.cosmocode.palava.core.session.HttpSession s, Server server, 
+        Map<String, Object> caddy, Session session) throws Exception {
 
-        JsonCall jRequest = (JsonCall) request;
-        json = jRequest.getJSONObject();
+        DataCall dataRequest = (DataCall) request;
+        args = dataRequest.getStringedArguments();
         
         if (session == null) session = createHibSession(server, caddy);
-
-        process(json, response, s, server, caddy, session);
+        
+        process(args, response, s, server, caddy, session);
         session.flush();
     }
     
-    protected abstract void process(JSONObject json, Response response, HttpSession s, Server server,
-        Map<String, Object> caddy, org.hibernate.Session session) throws Exception;
+    protected abstract void process(Map<String, String> args, Response response, de.cosmocode.palava.core.session.HttpSession s, Server server,
+        Map<String, Object> caddy, Session session) throws Exception;
     
-    
-    protected final void validate(JSONObject json, String... keys) throws MissingArgumentException {
-        for (String key : keys) {
-            if (!json.has(key)) throw new MissingArgumentException(key);
-        }
-    }
     
 
     // methods implemented from UtilityJob
 
     @Override
-    public String getMandatory(String key) throws MissingArgumentException, JSONException {
-        if (json.has(key)) return json.getString(key);
+    public String getMandatory(String key) throws MissingArgumentException {
+        if (args.containsKey(key)) return args.get(key);
         else throw new MissingArgumentException(this, key);
     }
 
     @Override
-    public String getMandatory(String key, String argumentType) throws MissingArgumentException, JSONException {
-        if (json.has(key)) return json.getString(key);
+    public String getMandatory(String key, String argumentType) throws MissingArgumentException {
+        if (args.containsKey(key)) return args.get(key);
         else throw new MissingArgumentException(this, key, argumentType);
     }
 
     @Override
     public String getOptional(String key) {
-        if (json.has(key)) return json.optString(key);
-        else return null;
+        return args.get(key);
     }
 
     @Override
     public String getOptional(String key, String defaultValue) {
-        if (json.has(key)) return json.optString(key);
+        if (args.containsKey(key)) return args.get(key);
         else return defaultValue;
     }
 
     @Override
     public boolean hasArgument(String key) {
-        return json.has(key);
+        return args.containsKey(key);
     }
-
+    
 }

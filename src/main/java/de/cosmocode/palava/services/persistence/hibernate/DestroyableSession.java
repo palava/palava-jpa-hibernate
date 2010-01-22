@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package de.cosmocode.palava.services.persistence;
+package de.cosmocode.palava.services.persistence.hibernate;
 
 import java.io.Serializable;
 import java.sql.Connection;
@@ -38,28 +38,35 @@ import org.hibernate.Transaction;
 import org.hibernate.jdbc.Work;
 import org.hibernate.stat.SessionStatistics;
 
-import de.cosmocode.palava.Closable;
+import com.google.common.base.Preconditions;
 
-public class ClosableSession implements Session, Closable {
+import de.cosmocode.palava.core.scope.Destroyable;
 
-    private static final long serialVersionUID = -1998276322962471556L;
+/**
+ * {@link Destroyable} version of a Hibernate {@link Session}.
+ *
+ * @author Willi Schoenborn
+ */
+final class DestroyableSession implements Session, Destroyable {
+
+    private static final long serialVersionUID = -3229611777799970807L;
     
     private final Session session;
     
-    public ClosableSession(Session session) {
-        this.session = session;
-    }
-    
-    @Override
-    public void onClose() {
-        if (session.isOpen()) session.close();
+    public DestroyableSession(Session session) {
+        this.session = Preconditions.checkNotNull(session, "Session");
     }
 
+    @Override
+    public void destroy() {
+        if (session.isOpen()) session.close();
+    }
+    
     @Override
     public Transaction beginTransaction() throws HibernateException {
         return session.beginTransaction();
     }
-    
+
     @Override
     public void cancelQuery() throws HibernateException {
         session.cancelQuery();
@@ -392,5 +399,5 @@ public class ClosableSession implements Session, Closable {
     public void update(String entityName, Object object) throws HibernateException {
         session.update(entityName, object);
     }
-    
+
 }

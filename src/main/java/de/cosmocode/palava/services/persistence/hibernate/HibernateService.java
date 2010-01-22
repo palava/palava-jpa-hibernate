@@ -17,42 +17,73 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package de.cosmocode.palava.services.persistence;
+package de.cosmocode.palava.services.persistence.hibernate;
 
 import java.io.File;
 import java.net.URL;
 
+import org.hibernate.Interceptor;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Preconditions;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import com.google.inject.servlet.RequestScoped;
 
 import de.cosmocode.palava.core.service.Service;
+import de.cosmocode.palava.core.service.lifecycle.Initializable;
 
 /**
  * 
  *
  * @author Willi Schoenborn
  */
-public class HibernateService implements Service {
+@Singleton
+public final class HibernateService implements Service, Initializable, Provider<Session> {
     
     private static final Logger log = LoggerFactory.getLogger(HibernateService.class);
+    
+    private SessionFactory sessionFactory;
 
-    private final SessionFactory sessionFactory;
-
-    public HibernateService(@Named("hibernate.cfg") File cfg, @Named("hibernate.schema") URL schema) {
+    private final File config;
+    
+    private final URL schema;
+    
+    private Interceptor interceptor;
+    
+    public HibernateService(@Named("hibernate.cfg") File config, @Named("hibernate.schema") URL schema) {
+        this.config = Preconditions.checkNotNull(config, "Config");
+        this.schema = Preconditions.checkNotNull(schema, "Schema");
+    }
+    
+    @Inject(optional = true)
+    public void setInterceptor(Interceptor interceptor) {
+        this.interceptor = interceptor;
+    }
+    
+    @Override
+    public void initialize() {
         final Configuration configuration = new AnnotationConfiguration();
-        
+    
         log.debug("Adding hibernate schema");
         configuration.addURL(schema);
         
         log.debug("Adding hibernate config file");
-        configuration.configure(cfg);
-
-        // TODO add services as interceptors, event listeners, filters, ...
+        configuration.configure(config);
+    
+        if (interceptor == null) {
+            log.info("No interceptor configured");
+        } else {
+            log.info("Using {} as interceptor", interceptor);
+            configuration.setInterceptor(interceptor);
+        }
 
         log.debug("Building session factory");
         this.sessionFactory = configuration.buildSessionFactory();
@@ -61,6 +92,12 @@ public class HibernateService implements Service {
     public SessionFactory getSessionFactory() {
         return sessionFactory;
     }
-
+    
+    @Override
+    @RequestScoped
+    public Session get() {
+        return sessionFactory.openSession();
+    }
+    
 }
 

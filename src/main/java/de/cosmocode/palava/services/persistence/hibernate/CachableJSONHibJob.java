@@ -17,10 +17,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package de.cosmocode.palava.jobs.hib;
+package de.cosmocode.palava.services.persistence.hibernate;
 
 import java.util.Map;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import de.cosmocode.palava.MissingArgumentException;
@@ -30,7 +31,7 @@ import de.cosmocode.palava.core.protocol.Response;
 import de.cosmocode.palava.core.server.Server;
 import de.cosmocode.palava.core.session.HttpSession;
 
-public abstract class JSONHibJob extends HibJob {
+public abstract class CachableJSONHibJob extends CachableHibJob {
     
     private JSONObject json;
 
@@ -47,13 +48,46 @@ public abstract class JSONHibJob extends HibJob {
         session.flush();
     }
     
-    protected final void require(String... keys) throws MissingArgumentException {
+    protected abstract void process(JSONObject json, Response response, HttpSession s, Server server,
+        Map<String, Object> caddy, org.hibernate.Session session) throws Exception;
+    
+    
+    protected final void validate(JSONObject json, String... keys) throws MissingArgumentException {
         for (String key : keys) {
             if (!json.has(key)) throw new MissingArgumentException(key);
         }
     }
     
-    protected abstract void process(JSONObject json, Response response, HttpSession s, Server server,
-        Map<String, Object> caddy, org.hibernate.Session session) throws Exception;
+
+    // methods implemented from UtilityJob
+
+    @Override
+    public String getMandatory(String key) throws MissingArgumentException, JSONException {
+        if (json.has(key)) return json.getString(key);
+        else throw new MissingArgumentException(this, key);
+    }
+
+    @Override
+    public String getMandatory(String key, String argumentType) throws MissingArgumentException, JSONException {
+        if (json.has(key)) return json.getString(key);
+        else throw new MissingArgumentException(this, key, argumentType);
+    }
+
+    @Override
+    public String getOptional(String key) {
+        if (json.has(key)) return json.optString(key);
+        else return null;
+    }
+
+    @Override
+    public String getOptional(String key, String defaultValue) {
+        if (json.has(key)) return json.optString(key);
+        else return defaultValue;
+    }
+
+    @Override
+    public boolean hasArgument(String key) {
+        return json.has(key);
+    }
 
 }

@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package de.cosmocode.palava.jobs.hib;
+package de.cosmocode.palava.services.persistence.hibernate;
 
 import java.util.Map;
 
@@ -29,7 +29,7 @@ import de.cosmocode.palava.core.protocol.DataCall;
 import de.cosmocode.palava.core.protocol.Response;
 import de.cosmocode.palava.core.server.Server;
 
-public abstract class DataHibJob extends HibJob {
+public abstract class DataHibJob extends HibernateJob {
 
     private Map<String, String> args;
     
@@ -39,12 +39,9 @@ public abstract class DataHibJob extends HibJob {
         Map<String, Object> caddy, Session session) throws Exception {
 
         DataCall dataRequest = (DataCall) request;
-        args = dataRequest.getArgs();
-        
-        if (session == null) session = createHibSession(server, caddy);
+        args = dataRequest.getStringedArguments();
         
         process(args, response, s, server, caddy, session);
-        session.flush();
     }
     
     protected final void validate(String... keys) throws MissingArgumentException {

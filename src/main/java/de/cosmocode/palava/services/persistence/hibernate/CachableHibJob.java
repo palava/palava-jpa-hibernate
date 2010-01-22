@@ -17,30 +17,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package de.cosmocode.palava.jobs.hib;
+package de.cosmocode.palava.services.persistence.hibernate;
 
 import java.util.Map;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-import de.cosmocode.palava.Job;
+import de.cosmocode.palava.CachableJob;
 import de.cosmocode.palava.core.call.Call;
 import de.cosmocode.palava.core.protocol.ConnectionLostException;
 import de.cosmocode.palava.core.protocol.Response;
 import de.cosmocode.palava.core.server.Server;
-import de.cosmocode.palava.services.persistence.ClosableSession;
-import de.cosmocode.palava.services.persistence.HibernateService;
 
-public abstract class HibJob implements Job {
+public abstract class CachableHibJob extends CachableJob {
     
     public static final String CADDY_HIBSESSION = "HibSession";
     
     @Override
-    public final void process(Call request, Response response, de.cosmocode.palava.core.session.HttpSession s, Server server,
+    public final void process(Call request, Response response, Server server, de.cosmocode.palava.core.session.HttpSession s,
             Map<String, Object> caddy) throws ConnectionLostException, Exception {
 
         Session session = (Session) caddy.get(CADDY_HIBSESSION);
+        if (session == null) session = createHibSession(server, caddy);
         process(request, response, s, server, caddy, session);
 
     }
@@ -49,7 +48,7 @@ public abstract class HibJob implements Job {
         
         HibernateService hib = server.getServiceManager().lookup(HibernateService.class);
         Session session = hib.getSessionFactory().openSession();
-        caddy.put(CADDY_HIBSESSION, new ClosableSession(session));
+        caddy.put(CADDY_HIBSESSION, session);
         
         return session;
     }

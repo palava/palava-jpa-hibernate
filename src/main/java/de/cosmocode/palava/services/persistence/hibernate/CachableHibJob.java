@@ -24,11 +24,11 @@ import java.util.Map;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-import de.cosmocode.palava.CachableJob;
 import de.cosmocode.palava.core.call.Call;
 import de.cosmocode.palava.core.protocol.ConnectionLostException;
 import de.cosmocode.palava.core.protocol.Response;
 import de.cosmocode.palava.core.server.Server;
+import de.cosmocode.palava.legacy.CachableJob;
 
 public abstract class CachableHibJob extends CachableJob {
     

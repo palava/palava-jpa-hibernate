@@ -33,7 +33,7 @@ public final class HibernateModule extends PalavaModule {
 
     @Override
     protected void configureApplication() {
-        serve(HibernateService.class).with(HibernateService.class);
+        serve(HibernateService.class).with(DefaultHibernateService.class);
         bind(Session.class).toProvider(HibernateService.class);
     }
 

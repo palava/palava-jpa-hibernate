@@ -75,6 +75,7 @@ public final class HibernateService implements Service, Initializable, Provider<
     
     private SessionFactory sessionFactory;
     
+    @Inject
     public HibernateService(
         @Named("hibernate.cfg") File config, 
         @Named("hibernate.schema") URL schema,
@@ -93,10 +94,10 @@ public final class HibernateService implements Service, Initializable, Provider<
     public void initialize() {
         final Configuration configuration = new AnnotationConfiguration();
     
-        log.debug("Adding hibernate schema");
+        log.debug("Adding hibernate schema: {}", schema);
         configuration.addURL(schema);
         
-        log.debug("Adding hibernate config file");
+        log.debug("Adding hibernate config file: {}", config);
         configuration.configure(config);
     
         if (interceptor == null) {
@@ -126,6 +127,7 @@ public final class HibernateService implements Service, Initializable, Provider<
     @Override
     @RequestScoped
     public Session get() {
+        // TODO destroyable
         return sessionFactory.openSession();
     }
     

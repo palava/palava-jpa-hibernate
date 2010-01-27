@@ -24,18 +24,18 @@ import java.util.Map;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-import de.cosmocode.palava.core.call.Call;
-import de.cosmocode.palava.core.command.Response;
-import de.cosmocode.palava.core.protocol.ConnectionLostException;
-import de.cosmocode.palava.core.server.Server;
+import de.cosmocode.palava.core.bridge.call.Call;
+import de.cosmocode.palava.core.bridge.command.Response;
+import de.cosmocode.palava.core.bridge.simple.ConnectionLostException;
 import de.cosmocode.palava.legacy.CachableJob;
+import de.cosmocode.palava.legacy.server.Server;
 
 public abstract class CachableHibJob extends CachableJob {
     
     public static final String CADDY_HIBSESSION = "HibSession";
     
     @Override
-    public final void process(Call request, Response response, Server server, de.cosmocode.palava.core.session.HttpSession s,
+    public final void process(Call request, Response response, Server server, de.cosmocode.palava.core.bridge.session.HttpSession s,
             Map<String, Object> caddy) throws ConnectionLostException, Exception {
 
         Session session = (Session) caddy.get(CADDY_HIBSESSION);
@@ -65,7 +65,7 @@ public abstract class CachableHibJob extends CachableJob {
     }
 
 
-    public abstract void process(Call request, Response response, de.cosmocode.palava.core.session.HttpSession s, Server server,
+    public abstract void process(Call request, Response response, de.cosmocode.palava.core.bridge.session.HttpSession s, Server server,
         Map<String, Object> caddy, Session session) throws Exception;
 
 }

@@ -39,7 +39,7 @@ import com.google.inject.internal.Lists;
 import com.google.inject.name.Named;
 import com.google.inject.servlet.RequestScoped;
 
-import de.cosmocode.palava.core.lifecycle.Initializable;
+import de.cosmocode.palava.core.framework.lifecycle.Initializable;
 import de.cosmocode.palava.core.registry.Registry;
 
 /**
@@ -63,7 +63,7 @@ public final class DefaultHibernateService implements HibernateService, Initiali
     
     private final File config;
     
-    private final URL schema;
+    private final File schema;
     
     private final Registry registry;
     
@@ -74,7 +74,7 @@ public final class DefaultHibernateService implements HibernateService, Initiali
     @Inject
     public DefaultHibernateService(
         @Named("hibernate.cfg") File config, 
-        @Named("hibernate.schema") URL schema,
+        @Named("hibernate.schema") File schema,
         Registry registry) {
         this.config = Preconditions.checkNotNull(config, "Config");
         this.schema = Preconditions.checkNotNull(schema, "Schema");
@@ -91,7 +91,8 @@ public final class DefaultHibernateService implements HibernateService, Initiali
         final Configuration configuration = new AnnotationConfiguration();
     
         log.debug("Adding hibernate schema: {}", schema);
-        configuration.addURL(schema);
+        configuration.addFile(schema);
+//        configuration.addURL(schema);
         
         log.debug("Adding hibernate config file: {}", config);
         configuration.configure(config);

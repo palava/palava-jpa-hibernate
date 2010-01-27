@@ -21,7 +21,7 @@ package de.cosmocode.palava.services.persistence.hibernate;
 
 import org.hibernate.Session;
 
-import de.cosmocode.palava.core.inject.PalavaModule;
+import de.cosmocode.palava.core.inject.AbstractApplication;
 
 /**
  * Binds the {@link HibernateService} as a service and a provider
@@ -29,7 +29,7 @@ import de.cosmocode.palava.core.inject.PalavaModule;
  *
  * @author Willi Schoenborn
  */
-public final class HibernateModule extends PalavaModule {
+public final class HibernateModule extends AbstractApplication {
 
     @Override
     protected void configureApplication() {

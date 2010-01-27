@@ -23,11 +23,11 @@ import java.util.Map;
 
 import org.hibernate.Session;
 
-import de.cosmocode.palava.core.call.Call;
-import de.cosmocode.palava.core.call.MissingArgumentException;
-import de.cosmocode.palava.core.command.Response;
-import de.cosmocode.palava.core.protocol.DataCall;
-import de.cosmocode.palava.core.server.Server;
+import de.cosmocode.palava.core.bridge.call.Call;
+import de.cosmocode.palava.core.bridge.call.DataCall;
+import de.cosmocode.palava.core.bridge.call.MissingArgumentException;
+import de.cosmocode.palava.core.bridge.command.Response;
+import de.cosmocode.palava.legacy.server.Server;
 
 public abstract class DataHibJob extends HibernateJob {
 
@@ -35,7 +35,7 @@ public abstract class DataHibJob extends HibernateJob {
     
     @Override
     @SuppressWarnings("unchecked")
-    public final void process(Call request, Response response, de.cosmocode.palava.core.session.HttpSession s, Server server, 
+    public final void process(Call request, Response response, de.cosmocode.palava.core.bridge.session.HttpSession s, Server server, 
         Map<String, Object> caddy, Session session) throws Exception {
 
         DataCall dataRequest = (DataCall) request;
@@ -50,7 +50,7 @@ public abstract class DataHibJob extends HibernateJob {
         }
     }
     
-    protected abstract void process(Map<String, String> args, Response response, de.cosmocode.palava.core.session.HttpSession s, Server server,
+    protected abstract void process(Map<String, String> args, Response response, de.cosmocode.palava.core.bridge.session.HttpSession s, Server server,
         Map<String, Object> caddy, Session session) throws Exception;
     
 }

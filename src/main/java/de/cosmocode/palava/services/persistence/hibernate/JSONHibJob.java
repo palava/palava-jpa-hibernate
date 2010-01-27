@@ -23,12 +23,12 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
-import de.cosmocode.palava.core.call.Call;
-import de.cosmocode.palava.core.call.MissingArgumentException;
-import de.cosmocode.palava.core.command.Response;
-import de.cosmocode.palava.core.protocol.JsonCall;
-import de.cosmocode.palava.core.server.Server;
-import de.cosmocode.palava.core.session.HttpSession;
+import de.cosmocode.palava.core.bridge.call.Call;
+import de.cosmocode.palava.core.bridge.call.JsonCall;
+import de.cosmocode.palava.core.bridge.call.MissingArgumentException;
+import de.cosmocode.palava.core.bridge.command.Response;
+import de.cosmocode.palava.core.bridge.session.HttpSession;
+import de.cosmocode.palava.legacy.server.Server;
 
 /**
  * 

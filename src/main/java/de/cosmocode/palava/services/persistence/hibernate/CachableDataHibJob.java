@@ -1,6 +1,6 @@
 /**
  * palava - a java-php-bridge
- * Copyright (C) 2007  CosmoCode GmbH
+ * Copyright (C) 2007-2010  CosmoCode GmbH
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,11 +23,11 @@ import java.util.Map;
 
 import org.hibernate.Session;
 
-import de.cosmocode.palava.core.bridge.call.Call;
-import de.cosmocode.palava.core.bridge.call.DataCall;
-import de.cosmocode.palava.core.bridge.call.MissingArgumentException;
-import de.cosmocode.palava.core.bridge.command.Response;
-import de.cosmocode.palava.legacy.server.Server;
+import de.cosmocode.palava.bridge.Server;
+import de.cosmocode.palava.bridge.call.Call;
+import de.cosmocode.palava.bridge.call.DataCall;
+import de.cosmocode.palava.bridge.call.MissingArgumentException;
+import de.cosmocode.palava.bridge.command.Response;
 
 public abstract class CachableDataHibJob extends CachableHibJob {
 
@@ -35,7 +35,7 @@ public abstract class CachableDataHibJob extends CachableHibJob {
     
     @Override
     @SuppressWarnings("unchecked")
-    public final void process(Call request, Response response, de.cosmocode.palava.core.bridge.session.HttpSession s, Server server, 
+    public final void process(Call request, Response response, de.cosmocode.palava.bridge.session.HttpSession s, Server server, 
         Map<String, Object> caddy, Session session) throws Exception {
 
         DataCall dataRequest = (DataCall) request;
@@ -47,7 +47,7 @@ public abstract class CachableDataHibJob extends CachableHibJob {
         session.flush();
     }
     
-    protected abstract void process(Map<String, String> args, Response response, de.cosmocode.palava.core.bridge.session.HttpSession s, Server server,
+    protected abstract void process(Map<String, String> args, Response response, de.cosmocode.palava.bridge.session.HttpSession s, Server server,
         Map<String, Object> caddy, Session session) throws Exception;
     
     

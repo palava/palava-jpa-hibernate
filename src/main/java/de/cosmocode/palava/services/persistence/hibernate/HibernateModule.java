@@ -1,6 +1,6 @@
 /**
  * palava - a java-php-bridge
- * Copyright (C) 2007  CosmoCode GmbH
+ * Copyright (C) 2007-2010  CosmoCode GmbH
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,7 +21,7 @@ package de.cosmocode.palava.services.persistence.hibernate;
 
 import org.hibernate.Session;
 
-import de.cosmocode.palava.core.inject.AbstractApplication;
+import de.cosmocode.palava.bridge.inject.AbstractApplication;
 
 /**
  * Binds the {@link HibernateService} as a service and a provider

@@ -1,6 +1,6 @@
 /**
  * palava - a java-php-bridge
- * Copyright (C) 2007  CosmoCode GmbH
+ * Copyright (C) 2007-2010  CosmoCode GmbH
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,12 +23,12 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
-import de.cosmocode.palava.core.bridge.call.Call;
-import de.cosmocode.palava.core.bridge.call.JsonCall;
-import de.cosmocode.palava.core.bridge.call.MissingArgumentException;
-import de.cosmocode.palava.core.bridge.command.Response;
-import de.cosmocode.palava.core.bridge.session.HttpSession;
-import de.cosmocode.palava.legacy.server.Server;
+import de.cosmocode.palava.bridge.Server;
+import de.cosmocode.palava.bridge.call.Call;
+import de.cosmocode.palava.bridge.call.JsonCall;
+import de.cosmocode.palava.bridge.call.MissingArgumentException;
+import de.cosmocode.palava.bridge.command.Response;
+import de.cosmocode.palava.bridge.session.HttpSession;
 
 /**
  * 

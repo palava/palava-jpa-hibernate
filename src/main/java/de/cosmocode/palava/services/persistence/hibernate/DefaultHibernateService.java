@@ -20,6 +20,7 @@
 package de.cosmocode.palava.services.persistence.hibernate;
 
 import java.io.File;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
@@ -38,8 +39,8 @@ import com.google.inject.internal.Lists;
 import com.google.inject.name.Named;
 import com.google.inject.servlet.RequestScoped;
 
+import de.cosmocode.palava.core.Registry;
 import de.cosmocode.palava.core.lifecycle.Initializable;
-import de.cosmocode.palava.registry.Registry;
 
 /**
  * 
@@ -48,7 +49,7 @@ import de.cosmocode.palava.registry.Registry;
  */
 public final class DefaultHibernateService implements HibernateService, Initializable {
     
-    private static final Logger log = LoggerFactory.getLogger(DefaultHibernateService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultHibernateService.class);
     
     private static final ImmutableMap<String, Class<?>> LISTENERS;
     
@@ -62,7 +63,7 @@ public final class DefaultHibernateService implements HibernateService, Initiali
     
     private final File config;
     
-    private final File schema;
+    private final URL schema;
     
     private final Registry registry;
     
@@ -73,7 +74,7 @@ public final class DefaultHibernateService implements HibernateService, Initiali
     @Inject
     public DefaultHibernateService(
         @Named("hibernate.cfg") File config, 
-        @Named("hibernate.schema") File schema,
+        @Named("hibernate.schema") URL schema,
         Registry registry) {
         this.config = Preconditions.checkNotNull(config, "Config");
         this.schema = Preconditions.checkNotNull(schema, "Schema");
@@ -89,17 +90,16 @@ public final class DefaultHibernateService implements HibernateService, Initiali
     public void initialize() {
         final Configuration configuration = new AnnotationConfiguration();
     
-        log.debug("Adding hibernate schema: {}", schema);
-        configuration.addFile(schema);
-//        configuration.addURL(schema);
+        LOG.debug("Adding hibernate schema: {}", schema);
+        configuration.addURL(schema);
         
-        log.debug("Adding hibernate config file: {}", config);
+        LOG.debug("Adding hibernate config file: {}", config);
         configuration.configure(config);
     
         if (interceptor == null) {
-            log.info("No interceptor configured");
+            LOG.info("No interceptor configured");
         } else {
-            log.info("Using {} as interceptor", interceptor);
+            LOG.info("Using {} as interceptor", interceptor);
             configuration.setInterceptor(interceptor);
         }
         
@@ -112,7 +112,7 @@ public final class DefaultHibernateService implements HibernateService, Initiali
             configuration.setListeners(entry.getKey(), array);
         }
 
-        log.debug("Building session factory");
+        LOG.debug("Building session factory");
         this.sessionFactory = configuration.buildSessionFactory();
     }
     

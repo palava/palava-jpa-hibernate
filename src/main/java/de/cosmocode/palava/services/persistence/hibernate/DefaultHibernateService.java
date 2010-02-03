@@ -21,8 +21,6 @@ package de.cosmocode.palava.services.persistence.hibernate;
 
 import java.io.File;
 import java.net.URL;
-import java.util.List;
-import java.util.Map;
 
 import org.hibernate.Interceptor;
 import org.hibernate.Session;
@@ -33,17 +31,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
-import com.google.inject.internal.Lists;
 import com.google.inject.name.Named;
 import com.google.inject.servlet.RequestScoped;
 
-import de.cosmocode.palava.core.Registry;
 import de.cosmocode.palava.core.lifecycle.Initializable;
 
 /**
- * 
+ * Default implementation of the {@link HibernateService} interface.
  *
  * @author Willi Schoenborn
  */
@@ -51,38 +46,24 @@ public final class DefaultHibernateService implements HibernateService, Initiali
     
     private static final Logger LOG = LoggerFactory.getLogger(DefaultHibernateService.class);
     
-    private static final ImmutableMap<String, Class<?>> LISTENERS;
-    
-    static {
-        final ImmutableMap.Builder<String, Class<?>> builder = ImmutableMap.builder();
-        
-        // TODO add listener interfaces
-        
-        LISTENERS = builder.build();
-    }
-    
     private final File config;
     
     private final URL schema;
     
-    private final Registry registry;
-    
     private Interceptor interceptor;
     
-    private SessionFactory sessionFactory;
+    private SessionFactory factory;
     
     @Inject
     public DefaultHibernateService(
         @Named("hibernate.cfg") File config, 
-        @Named("hibernate.schema") URL schema,
-        Registry registry) {
+        @Named("hibernate.schema") URL schema) {
         this.config = Preconditions.checkNotNull(config, "Config");
         this.schema = Preconditions.checkNotNull(schema, "Schema");
-        this.registry = Preconditions.checkNotNull(registry, "Registry");
     }
     
     @Inject(optional = true)
-    public void setInterceptor(Interceptor interceptor) {
+    void setInterceptor(Interceptor interceptor) {
         this.interceptor = interceptor;
     }
     
@@ -103,30 +84,19 @@ public final class DefaultHibernateService implements HibernateService, Initiali
             configuration.setInterceptor(interceptor);
         }
         
-        // TODO how can we make sure, all listeners are already registers when doing this?
-        for (Map.Entry<String, Class<?>> entry : LISTENERS.entrySet()) {
-            final Iterable<? extends Object> listeners = registry.getListeners(entry.getValue());
-            final List<Object> list = Lists.newArrayList(listeners);
-            if (list.isEmpty()) continue;
-            final Object[] array = list.toArray(new Object[list.size()]);
-            configuration.setListeners(entry.getKey(), array);
-        }
-
         LOG.debug("Building session factory");
-        this.sessionFactory = configuration.buildSessionFactory();
+        this.factory = configuration.buildSessionFactory();
     }
     
     @Override
     public SessionFactory getSessionFactory() {
-        return sessionFactory;
+        return factory;
     }
     
     @Override
     @RequestScoped
     public Session get() {
-        // TODO destroyable
-        return sessionFactory.openSession();
+        return new DestroyableSession(factory.openSession());
     }
     
 }
-

@@ -30,7 +30,7 @@ import de.cosmocode.palava.bridge.scope.Destroyable;
  *
  * @author Willi Schoenborn
  */
-final class DestroyableSession extends SessionDecorator implements Destroyable {
+final class DestroyableSession extends ForwardingSession implements Destroyable {
 
     private static final long serialVersionUID = -3229611777799970807L;
     

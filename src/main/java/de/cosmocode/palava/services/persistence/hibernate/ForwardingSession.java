@@ -38,12 +38,14 @@ import org.hibernate.Transaction;
 import org.hibernate.jdbc.Work;
 import org.hibernate.stat.SessionStatistics;
 
+import com.google.common.collect.ForwardingObject;
+
 /**
  * Decorates a {@link Session} to alter behaviour for certain methods.
  *
  * @author Willi Schoenborn
  */
-abstract class SessionDecorator implements Session {
+abstract class ForwardingSession extends ForwardingObject implements Session {
 
     private static final long serialVersionUID = -3449067627280246157L;
 

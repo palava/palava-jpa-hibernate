@@ -28,15 +28,19 @@ import com.google.inject.Provider;
 
 import de.cosmocode.palava.bridge.Server;
 import de.cosmocode.palava.bridge.call.Call;
+import de.cosmocode.palava.bridge.command.Command;
 import de.cosmocode.palava.bridge.command.Job;
 import de.cosmocode.palava.bridge.command.Response;
 import de.cosmocode.palava.bridge.session.HttpSession;
 
 /**
  * Abstract base class for Hibernate related entity management.
+ * 
+ * @deprecated use {@link Command} and an injected {@link Provider} for {@link Session}s 
  *
  * @author Willi Schoenborn
  */
+@Deprecated
 public abstract class HibernateJob implements Job {
     
     @Inject

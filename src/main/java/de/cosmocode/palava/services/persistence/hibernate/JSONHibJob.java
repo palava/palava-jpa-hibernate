@@ -21,20 +21,25 @@ package de.cosmocode.palava.services.persistence.hibernate;
 
 import java.util.Map;
 
+import org.hibernate.Session;
 import org.json.JSONObject;
+
+import com.google.inject.Provider;
 
 import de.cosmocode.palava.bridge.Server;
 import de.cosmocode.palava.bridge.call.Call;
 import de.cosmocode.palava.bridge.call.JsonCall;
 import de.cosmocode.palava.bridge.call.MissingArgumentException;
+import de.cosmocode.palava.bridge.command.Command;
 import de.cosmocode.palava.bridge.command.Response;
 import de.cosmocode.palava.bridge.session.HttpSession;
 
 /**
- * 
+ * @deprecated use {@link Command} and an injected {@link Provider} for {@link Session}s 
  *
  * @author Willi Schoenborn
  */
+@Deprecated
 public abstract class JSONHibJob extends HibernateJob {
     
     private JSONObject json;

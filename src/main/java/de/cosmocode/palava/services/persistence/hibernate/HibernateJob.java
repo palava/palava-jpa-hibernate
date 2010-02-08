@@ -47,11 +47,11 @@ public abstract class HibernateJob implements Job {
     private Provider<Session> provider;
     
     @Override
-    public final void process(Call request, Response response, HttpSession httpSession, Server server,
+    public final void process(Call call, Response response, HttpSession httpSession, Server server,
             Map<String, Object> caddy) throws Exception {
 
         final Session session = provider.get();
-        process(request, response, httpSession, server, caddy, session);
+        process(call, response, httpSession, server, caddy, session);
         session.flush();
     }
     

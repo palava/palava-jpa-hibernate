@@ -17,24 +17,37 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package de.cosmocode.palava.services.persistence.hibernate;
+package de.cosmocode.palava.jpa.hibernate;
 
 import org.hibernate.Session;
 
-import de.cosmocode.palava.bridge.inject.AbstractApplication;
+import com.google.common.base.Preconditions;
+
+import de.cosmocode.palava.bridge.scope.Destroyable;
 
 /**
- * Binds the {@link HibernateService} as a service and a provider
- * for {@link Session}s.
+ * {@link Destroyable} version of a Hibernate {@link Session}.
  *
  * @author Willi Schoenborn
  */
-public final class HibernateModule extends AbstractApplication {
+final class DestroyableSession extends ForwardingSession implements Destroyable {
+
+    private static final long serialVersionUID = -3229611777799970807L;
+    
+    private final Session session;
+    
+    public DestroyableSession(Session session) {
+        this.session = Preconditions.checkNotNull(session, "Session");
+    }
+    
+    @Override
+    protected Session delegate() {
+        return session;
+    }
 
     @Override
-    protected void configureApplication() {
-        serve(HibernateService.class).with(DefaultHibernateService.class);
-        bind(Session.class).toProvider(HibernateService.class);
+    public void destroy() {
+        if (session.isOpen()) session.close();
     }
 
 }

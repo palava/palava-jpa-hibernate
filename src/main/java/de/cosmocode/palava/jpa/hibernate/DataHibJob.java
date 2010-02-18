@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package de.cosmocode.palava.services.persistence.hibernate;
+package de.cosmocode.palava.jpa.hibernate;
 
 import java.util.Map;
 
@@ -34,7 +34,6 @@ public abstract class DataHibJob extends HibernateJob {
     private Map<String, String> args;
     
     @Override
-    @SuppressWarnings("unchecked")
     public final void process(Call request, Response response, de.cosmocode.palava.bridge.session.HttpSession s, Server server, 
         Map<String, Object> caddy, Session session) throws Exception {
 

@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package de.cosmocode.palava.services.persistence.hibernate;
+package de.cosmocode.palava.jpa.hibernate;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -26,8 +26,19 @@ import com.google.inject.Provider;
 
 import de.cosmocode.palava.core.Service;
 
+/**
+ * A Service which provides access to a {@link SessionFactory} and can produce
+ * {@link Session}s.
+ *
+ * @author Willi Schoenborn
+ */
 public interface HibernateService extends Service, Provider<Session> {
-    
-    public SessionFactory getSessionFactory();
+  
+    /**
+     * Provide access to the configured {@link SessionFactory}.
+     * 
+     * @return the associated session factory
+     */
+    SessionFactory getSessionFactory();
     
 }

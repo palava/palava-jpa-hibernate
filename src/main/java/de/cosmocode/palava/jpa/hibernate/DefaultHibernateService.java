@@ -27,6 +27,7 @@ import java.util.Map.Entry;
 import javax.management.InstanceNotFoundException;
 import javax.management.JMException;
 import javax.management.MBeanRegistrationException;
+import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.hibernate.Interceptor;
@@ -78,7 +79,6 @@ import de.cosmocode.palava.core.Registry.Key;
 import de.cosmocode.palava.core.lifecycle.Disposable;
 import de.cosmocode.palava.core.lifecycle.Initializable;
 import de.cosmocode.palava.core.lifecycle.LifecycleException;
-import de.cosmocode.palava.jmx.MBeanServerProvider;
 
 /**
  * Default implementation of the {@link HibernateService} interface.
@@ -144,7 +144,7 @@ public final class DefaultHibernateService implements HibernateService, Initiali
     
     private boolean propagateEvents;
     
-    private MBeanServerProvider mBeanServerProvider;
+    private MBeanServer mBeanServer;
     
     private String mBeanName = DefaultHibernateService.class.getName();
     
@@ -173,8 +173,8 @@ public final class DefaultHibernateService implements HibernateService, Initiali
     }
     
     @Inject(optional = true)
-    void setMBeanServerProvider(MBeanServerProvider mBeanServerProvider) {
-        this.mBeanServerProvider = Preconditions.checkNotNull(mBeanServerProvider, "MBeanServerProvider");
+    void setMBeanServer(MBeanServer mBeanServer) {
+        this.mBeanServer = Preconditions.checkNotNull(mBeanServer, "MBeanServer");
     }
     
     @Inject(optional = true)
@@ -216,10 +216,10 @@ public final class DefaultHibernateService implements HibernateService, Initiali
         LOG.debug("Building session factory");
         this.factory = configuration.buildSessionFactory();
         
-        if (mBeanServerProvider == null) {
+        if (mBeanServer == null) {
             LOG.info("No support for JMX, running in normal mode");
         } else {
-            LOG.info("MBeanServer provided by {}", mBeanServerProvider);
+            LOG.info("MBeanServer provided by {}", mBeanServer);
             
             final StatisticsService statistics = new StatisticsService();
             statistics.setSessionFactory(factory);
@@ -234,7 +234,7 @@ public final class DefaultHibernateService implements HibernateService, Initiali
             LOG.info("Regsitering {} as {}", service, name);
             final ObjectName objectName = new ObjectName(name);
             mBeanNames.add(objectName);
-            mBeanServerProvider.getMBeanServer().registerMBean(service, objectName);
+            mBeanServer.registerMBean(service, objectName);
         } catch (JMException e) {
             throw new LifecycleException(e);
         }
@@ -253,16 +253,16 @@ public final class DefaultHibernateService implements HibernateService, Initiali
     
     @Override
     public void dispose() throws LifecycleException {
-        if (mBeanServerProvider == null) return;
+        if (mBeanServer == null) return;
         for (ObjectName objectName : mBeanNames) {
             unregister(objectName);
         }
     }
     
     private void unregister(ObjectName objectName) {
-        if (mBeanServerProvider.getMBeanServer().isRegistered(objectName)) {
+        if (mBeanServer.isRegistered(objectName)) {
             try {
-                mBeanServerProvider.getMBeanServer().unregisterMBean(objectName);
+                mBeanServer.unregisterMBean(objectName);
             } catch (InstanceNotFoundException e) {
                 throw new LifecycleException(e);
             } catch (MBeanRegistrationException e) {

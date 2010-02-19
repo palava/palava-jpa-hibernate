@@ -21,7 +21,9 @@ package de.cosmocode.palava.jpa.hibernate;
 
 import org.hibernate.Session;
 
-import de.cosmocode.palava.bridge.inject.AbstractApplication;
+import com.google.inject.Binder;
+import com.google.inject.Module;
+import com.google.inject.Singleton;
 
 /**
  * Binds the {@link HibernateService} as a service and a provider
@@ -29,12 +31,12 @@ import de.cosmocode.palava.bridge.inject.AbstractApplication;
  *
  * @author Willi Schoenborn
  */
-public final class HibernateModule extends AbstractApplication {
+public final class HibernateModule implements Module {
 
     @Override
-    protected void configureApplication() {
-        serve(HibernateService.class).with(DefaultHibernateService.class);
-        bind(Session.class).toProvider(HibernateService.class);
+    public void configure(Binder binder) {
+        binder.bind(HibernateService.class).to(DefaultHibernateService.class).in(Singleton.class);
+        binder.bind(Session.class).toProvider(HibernateService.class);
     }
 
 }

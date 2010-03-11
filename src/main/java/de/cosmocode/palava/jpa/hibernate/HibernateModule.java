@@ -25,6 +25,8 @@ import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Singleton;
 
+import de.cosmocode.palava.ipc.IpcConnectionScoped;
+
 /**
  * Binds the {@link HibernateService} as a service and a provider
  * for {@link Session}s.
@@ -36,7 +38,7 @@ public final class HibernateModule implements Module {
     @Override
     public void configure(Binder binder) {
         binder.bind(HibernateService.class).to(DefaultHibernateService.class).in(Singleton.class);
-        binder.bind(Session.class).toProvider(HibernateService.class);
+        binder.bind(Session.class).toProvider(HibernateService.class).in(IpcConnectionScoped.class);
     }
 
 }

@@ -246,7 +246,6 @@ public final class DefaultHibernateService implements HibernateService, Initiali
     }
     
     @Override
-    @RequestScoped
     public Session get() {
         return new DestroyableSession(factory.openSession());
     }

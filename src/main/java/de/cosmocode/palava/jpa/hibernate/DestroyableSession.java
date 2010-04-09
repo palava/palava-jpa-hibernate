@@ -23,7 +23,7 @@ import org.hibernate.Session;
 
 import com.google.common.base.Preconditions;
 
-import de.cosmocode.palava.core.scope.Destroyable;
+import de.cosmocode.palava.scope.Destroyable;
 
 /**
  * {@link Destroyable} version of a Hibernate {@link Session}.

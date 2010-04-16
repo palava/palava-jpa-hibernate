@@ -72,7 +72,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 import com.google.inject.internal.Sets;
 import com.google.inject.name.Named;
-import com.google.inject.servlet.RequestScoped;
 
 import de.cosmocode.palava.core.Registry;
 import de.cosmocode.palava.core.Registry.Key;

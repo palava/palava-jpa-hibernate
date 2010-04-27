@@ -24,15 +24,13 @@ import org.hibernate.SessionFactory;
 
 import com.google.inject.Provider;
 
-import de.cosmocode.palava.core.Service;
-
 /**
  * A Service which provides access to a {@link SessionFactory} and can produce
  * {@link Session}s.
  *
  * @author Willi Schoenborn
  */
-public interface HibernateService extends Service, Provider<Session> {
+public interface HibernateService extends Provider<Session> {
   
     /**
      * Provide access to the configured {@link SessionFactory}.

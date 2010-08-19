@@ -26,12 +26,14 @@ import org.hibernate.Filter;
 import org.hibernate.FlushMode;
 import org.hibernate.HibernateException;
 import org.hibernate.LockMode;
+import org.hibernate.LockOptions;
 import org.hibernate.Query;
 import org.hibernate.ReplicationMode;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.UnknownProfileException;
 import org.hibernate.jdbc.Work;
 import org.hibernate.stat.SessionStatistics;
 
@@ -52,7 +54,7 @@ abstract class ForwardingSession extends ForwardingObject implements Session {
      * @return the delegate
      */
     protected abstract Session delegate();
-
+    
     @Override
     public Transaction beginTransaction() throws HibernateException {
         return delegate().beginTransaction();
@@ -85,14 +87,12 @@ abstract class ForwardingSession extends ForwardingObject implements Session {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public Criteria createCriteria(Class persistentClass, String alias) {
+    public Criteria createCriteria(@SuppressWarnings("rawtypes") Class persistentClass, String alias) {
         return delegate().createCriteria(persistentClass, alias);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public Criteria createCriteria(Class persistentClass) {
+    public Criteria createCriteria(@SuppressWarnings("rawtypes") Class persistentClass) {
         return delegate().createCriteria(persistentClass);
     }
 
@@ -162,18 +162,19 @@ abstract class ForwardingSession extends ForwardingObject implements Session {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public Object get(Class clazz, Serializable id, LockMode lockMode) throws HibernateException {
+    @SuppressWarnings("deprecation")
+    public Object get(@SuppressWarnings("rawtypes") Class clazz, Serializable id, 
+            LockMode lockMode) throws HibernateException {
         return delegate().get(clazz, id, lockMode);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public Object get(Class clazz, Serializable id) throws HibernateException {
+    public Object get(@SuppressWarnings("rawtypes") Class clazz, Serializable id) throws HibernateException {
         return delegate().get(clazz, id);
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public Object get(String entityName, Serializable id, LockMode lockMode) throws HibernateException {
         return delegate().get(entityName, id, lockMode);
     }
@@ -259,14 +260,14 @@ abstract class ForwardingSession extends ForwardingObject implements Session {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public Object load(Class theClass, Serializable id, LockMode lockMode) throws HibernateException {
+    @SuppressWarnings("deprecation")
+    public Object load(@SuppressWarnings("rawtypes") Class theClass, 
+            Serializable id, LockMode lockMode) throws HibernateException {
         return delegate().load(theClass, id, lockMode);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public Object load(Class theClass, Serializable id) throws HibernateException {
+    public Object load(@SuppressWarnings("rawtypes") Class theClass, Serializable id) throws HibernateException {
         return delegate().load(theClass, id);
     }
 
@@ -276,6 +277,7 @@ abstract class ForwardingSession extends ForwardingObject implements Session {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public Object load(String entityName, Serializable id, LockMode lockMode) throws HibernateException {
         return delegate().load(entityName, id, lockMode);
     }
@@ -286,11 +288,13 @@ abstract class ForwardingSession extends ForwardingObject implements Session {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void lock(Object object, LockMode lockMode) throws HibernateException {
         delegate().lock(object, lockMode);
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void lock(String entityName, Object object, LockMode lockMode) throws HibernateException {
         delegate().lock(entityName, object, lockMode);
     }
@@ -327,6 +331,7 @@ abstract class ForwardingSession extends ForwardingObject implements Session {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void refresh(Object object, LockMode lockMode) throws HibernateException {
         delegate().refresh(object, lockMode);
     }
@@ -389,6 +394,68 @@ abstract class ForwardingSession extends ForwardingObject implements Session {
     @Override
     public void update(String entityName, Object object) throws HibernateException {
         delegate().update(entityName, object);
+    }
+
+    @Override
+    public boolean isDefaultReadOnly() {
+        return delegate().isDefaultReadOnly();
+    }
+
+    @Override
+    public void setDefaultReadOnly(boolean readOnly) {
+        delegate().setDefaultReadOnly(readOnly);
+    }
+
+    @Override
+    public Object load(@SuppressWarnings("rawtypes") Class theClass, Serializable id, 
+            LockOptions lockOptions) throws HibernateException {
+        return delegate().load(theClass, id, lockOptions);
+    }
+
+    @Override
+    public Object load(String entityName, Serializable id, LockOptions lockOptions) throws HibernateException {
+        return delegate().load(entityName, id, lockOptions);
+    }
+
+    @Override
+    public LockRequest buildLockRequest(LockOptions lockOptions) {
+        return delegate().buildLockRequest(lockOptions);
+    }
+
+    @Override
+    public void refresh(Object object, LockOptions lockOptions) throws HibernateException {
+        delegate().refresh(object, lockOptions);
+    }
+
+    @Override
+    public Object get(@SuppressWarnings("rawtypes") Class clazz, Serializable id, 
+            LockOptions lockOptions) throws HibernateException {
+        return delegate().get(clazz, id, lockOptions);
+    }
+
+    @Override
+    public Object get(String entityName, Serializable id, LockOptions lockOptions) throws HibernateException {
+        return delegate().get(entityName, id, lockOptions);
+    }
+
+    @Override
+    public boolean isReadOnly(Object entityOrProxy) {
+        return delegate().isReadOnly(entityOrProxy);
+    }
+
+    @Override
+    public boolean isFetchProfileEnabled(String name) throws UnknownProfileException {
+        return delegate().isFetchProfileEnabled(name);
+    }
+
+    @Override
+    public void enableFetchProfile(String name) throws UnknownProfileException {
+        delegate().enableFetchProfile(name);
+    }
+
+    @Override
+    public void disableFetchProfile(String name) throws UnknownProfileException {
+        delegate().disableFetchProfile(name);
     }
 
 }

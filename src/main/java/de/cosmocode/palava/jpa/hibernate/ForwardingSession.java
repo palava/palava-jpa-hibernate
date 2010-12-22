@@ -53,6 +53,7 @@ abstract class ForwardingSession extends ForwardingObject implements Session {
      * 
      * @return the delegate
      */
+    @Override
     protected abstract Session delegate();
     
     @Override
